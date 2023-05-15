@@ -110,7 +110,9 @@ if (isset($_GET['emp_no'])) {
     echo "<p>Hire Date: {$employee['hire_date']}</p>";
 
     // Retrieve the employee's salary history
-    $sql = "SELECT from_date, to_date, salary
+    $sql = "SELECT from_date, 
+            to_date, 
+            salary
             FROM salaries
             WHERE emp_no = :emp_no
             ORDER BY to_date DESC";

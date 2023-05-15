@@ -11,25 +11,32 @@ class Employee
         global $conn;
 
         try {
-            $sql = "SELECT t.title AS employee_title, CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
-                e.birth_date, TIMESTAMPDIFF(YEAR, e.birth_date, CURDATE()) AS employee_age,
-                e.gender, e.hire_date, s.salary AS latest_salary, e.emp_no
-                FROM employees e
-                JOIN (
+            $sql = "SELECT t.title AS employee_title, 
+                    CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+                    e.birth_date, 
+                    TIMESTAMPDIFF(YEAR, e.birth_date, CURDATE()) AS employee_age,
+                    e.gender, 
+                    e.hire_date, 
+                    s.salary AS latest_salary, 
+                    e.emp_no
+                    FROM employees e
+                    JOIN (
                     SELECT emp_no, MAX(to_date) AS max_to_date
                     FROM titles
                     GROUP BY emp_no
-                ) mt ON e.emp_no = mt.emp_no
-                JOIN titles t ON e.emp_no = t.emp_no AND mt.max_to_date = t.to_date
-                JOIN (
+                    )   
+                    mt ON e.emp_no = mt.emp_no
+                    JOIN titles t ON e.emp_no = t.emp_no AND mt.max_to_date = t.to_date
+                    JOIN (
                     SELECT emp_no, MAX(to_date) AS max_to_date
                     FROM salaries
                     GROUP BY emp_no
-                ) ms ON e.emp_no = ms.emp_no
-                JOIN salaries s ON e.emp_no = s.emp_no AND ms.max_to_date = s.to_date
-                JOIN dept_emp de ON e.emp_no = de.emp_no
-                WHERE de.dept_no = :dept_no
-                LIMIT 75";
+                    ) 
+                    ms ON e.emp_no = ms.emp_no
+                    JOIN salaries s ON e.emp_no = s.emp_no AND ms.max_to_date = s.to_date
+                    JOIN dept_emp de ON e.emp_no = de.emp_no
+                    WHERE de.dept_no = :dept_no
+                    LIMIT 75";
 
             $statement = $conn->prepare($sql);
             $statement->bindValue(':dept_no', $dept_no);
